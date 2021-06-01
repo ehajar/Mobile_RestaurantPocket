@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { Link } from "react-router-dom";
 import _, { map } from "underscore";
 import "./style/menu.css";
 import Card from "react-bootstrap/Card";
@@ -99,9 +100,14 @@ class Menu extends Component {
               <p className="prix">{this.state.prixTotal} DH </p>
             </div>
             <div className="controls">
-              <Button onClick={()=>{
-                alert(this.state.prixTotal)
+            <Link to="/PaymentForm" >
+            <Button onClick={()=>{
+                
+                // alert(this.state.prixTotal)
               }} className="checkout">Check Out</Button>
+                  
+                  </Link>
+              
             </div>
           </div>:<div className="EmptyList">
               <i class="bi bi-basket"></i>
