@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component  , useState} from "react";
 import { Link } from "react-router-dom";
 import _, { map } from "underscore";
 import "./style/menu.css";
@@ -7,6 +7,10 @@ import MenuService from "../services/menu.service";
 import "./global";
 import Button from "react-bootstrap/Button";
 class Menu extends Component {
+
+
+
+
   state = {
     menu: [],
     resultat: [],
@@ -17,6 +21,17 @@ class Menu extends Component {
     lastItemAdded:0,
     prixTotal:0
   };
+
+
+   ItemCounter =(array, item)=>{
+    let counter = 0
+    array.flat(Infinity).forEach(x => {
+      if(x == item){ counter++ }
+    });
+    return counter
+  }
+
+  
 
   componentDidMount() {
     MenuService.getallmenu(global.qr).then(
@@ -50,9 +65,10 @@ class Menu extends Component {
     this.state.selectedItems.map((ele)=>{
       if(ele.id!==id){
         tmp = [...tmp,ele]
+     
       }else{
         this.setState({
-          prixTotal:this.state.prixTotal-ele.prix
+          prixTotal:this.state.prixTotal-ele.qte*ele.prix
         })
       }
     })
@@ -85,7 +101,13 @@ class Menu extends Component {
           {this.state.selectedItems.length!==0?<div className="content">
             <div className="items">
               {this.state.selectedItems.map((ele,index)=>{
-                return <div key={index} className="item">
+                  if(ele in this.state.selectedItems){
+                        <p>sc,od</p>
+                  }
+                  else{
+                    return <div key={index} className="item">
+                         
+                       
                         <p className="qte">{ele.qte}x</p>
                         <p className="title">{ele.title}</p>
                         <p className="prix">{ele.prix}DH</p>
@@ -93,6 +115,14 @@ class Menu extends Component {
                           this.delete(ele.id);
                         }} class="icon bi bi-x"></i>
                       </div>
+
+                  }
+                    
+
+                    
+                     
+                    
+                
               })}
             </div>
             <div className="Total">
@@ -149,17 +179,74 @@ class Menu extends Component {
                           {menuone.description}
                         </Card.Text>
                         <Button onClick={()=>{
-                          this.setState({
-                            selectedItems:[...this.state.selectedItems,{
-                              id:this.state.lastItemAdded+1,
-                              qte:1,
-                              title:menuone.nomrepas,
-                              prix:menuone.prix
-                            }],
-                            prixTotal:this.state.prixTotal+menuone.prix,
-                            lastItemAdded:this.state.lastItemAdded+1
-                          })
-                        }} className="ajouter">Ajouter</Button>
+                       
+                       var occ=1
+                          const product = {
+                            id:this.state.lastItemAdded,
+                            qte:occ,
+                            title:menuone.nomrepas,
+                            prix:menuone.prix
+                          }
+
+                          var found = false;
+                          for(var i = 0; i < this.state.selectedItems.length; i++) {
+                              if (this.state.selectedItems[i].title == menuone.nomrepas) {
+                                  found = true;
+                                  break;
+                              }
+                          }
+
+                          
+
+
+                          if(!found){
+                            this.setState({
+                              selectedItems:[...this.state.selectedItems,product],
+                              prixTotal:this.state.prixTotal+menuone.prix,
+                              lastItemAdded:this.state.lastItemAdded+1
+                            })
+
+                          }
+                          
+                        
+                          
+                          for(var i = 0; i < this.state.selectedItems.length; i++) {
+                            if (this.state.selectedItems[i].title == menuone.nomrepas) {
+                                occ=occ+ 1;
+                                this.state.selectedItems[i].qte+=1
+                                
+                            }
+                            
+                           
+                           
+                          //  let new_array = this.state.selectedItems.map(element =>element.id == this.state.lastItemAdded ?  ({...element, qte : occ}) :element);
+                            this.setState({
+                              
+                             
+                           
+                              prixTotal:this.state.prixTotal+ menuone.prix,
+                              lastItemAdded:this.state.lastItemAdded+1
+                            })
+  
+                            
+                        }
+
+                        console.log(occ)
+
+                          
+
+                          
+
+
+                          
+
+                             
+
+
+
+                          
+                           console.log(this.state.selectedItems)
+                        } } className="ajouter">Ajouter</Button>
                       </Card.Body>
                     </Card>
                   );
